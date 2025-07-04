@@ -5,6 +5,7 @@ LLM tokenizers and analyze text strings across different tokenization models.
 """
 
 import json
+import logging
 from typing import Dict, List, Any
 import tiktoken
 from transformers import AutoTokenizer
@@ -26,24 +27,27 @@ class ComparativeTokenizer:
         """
         self.tokenizers = {}
         
-        # Initialize OpenAI gpt-4o tokenizer
-        self.tokenizers["gpt-4o"] = tiktoken.encoding_for_model("gpt-4o")
-        
-        # Initialize Meta Llama-3-8B tokenizer
-        self.tokenizers["Llama-3-8B"] = AutoTokenizer.from_pretrained(
-            "meta-llama/Meta-Llama-3-8B-Instruct"
-        )
+        try:
+            # Initialize OpenAI gpt-4o tokenizer
+            self.tokenizers["gpt-4o"] = tiktoken.encoding_for_model("gpt-4o")
+            
+            # Initialize Meta Llama-3-8B tokenizer
+            self.tokenizers["Llama-3-8B"] = AutoTokenizer.from_pretrained(
+                "meta-llama/Meta-Llama-3-8B-Instruct"
+            )
+        except Exception as e:
+            logging.error(f"Error loading tokenizers: {e}")
+            self.tokenizers = {}
     
     def analyze(self, text_string: str) -> Dict[str, Dict[str, List[Any]]]:
-        """Analyze a text string using all loaded tokenizers.
-        
+        """Analyzes a string by tokenizing it with all loaded tokenizers.
+
         Args:
-            text_string: The input text to tokenize and analyze.
-            
+            text_string: The string to be analyzed.
+
         Returns:
-            A dictionary mapping tokenizer names to their tokenization results.
-            Each result contains 'tokens' (list of token strings) and 'ids' 
-            (list of token IDs).
+            A dictionary where keys are tokenizer names and values are dicts
+            containing the token strings and their corresponding IDs.
         """
         results = {}
         
