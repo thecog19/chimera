@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import Mock, patch
-from core_engine import ComparativeTokenizer
+from src.core_engine import ComparativeTokenizer
 
 
 class TestComparativeTokenizer:
